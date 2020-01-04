@@ -217,7 +217,12 @@ var EasyStar =
 	        if (directionalConditions[y] === undefined) {
 	            directionalConditions[y] = {};
 	        }
-	        directionalConditions[y][x] = allowedDirections;
+	        directionalConditions[y][x] = allowedDirections.map(function (c) {
+	            return c | 0;
+	        }) // force integer
+	        .reduce(function (p, c) {
+	            return p | c;
+	        }, 0);
 	    };
 
 	    /**
@@ -526,23 +531,12 @@ var EasyStar =
 	    // Helpers
 	    var isTileWalkable = function (x, y, sourceNode) {
 	        var directionalCondition = directionalConditions[y] && directionalConditions[y][x];
-	        if (directionalCondition) {
+	        if (directionalCondition !== undefined) {
 	            var direction = calculateDirection(sourceNode.x - x, sourceNode.y - y);
-	            var directionIncluded = function () {
-	                for (var i = 0; i < directionalCondition.length; i++) {
-	                    if (directionalCondition[i] === direction) return true;
-	                }
-	                return false;
-	            };
-	            if (!directionIncluded()) return false;
-	        }
-	        for (var i = 0; i < acceptableTiles.length; i++) {
-	            if (getTileAt(x, y) === acceptableTiles[i]) {
-	                return true;
-	            }
+	            return (direction & directionalCondition) > 0;
 	        }
 
-	        return false;
+	        return acceptableTiles.indexOf(collisionGrid[y][x]) !== -1;
 	    };
 
 	    /**
@@ -613,14 +607,14 @@ var EasyStar =
 	    };
 	};
 
-	EasyStar.TOP = 'TOP';
-	EasyStar.TOP_RIGHT = 'TOP_RIGHT';
-	EasyStar.RIGHT = 'RIGHT';
-	EasyStar.BOTTOM_RIGHT = 'BOTTOM_RIGHT';
-	EasyStar.BOTTOM = 'BOTTOM';
-	EasyStar.BOTTOM_LEFT = 'BOTTOM_LEFT';
-	EasyStar.LEFT = 'LEFT';
-	EasyStar.TOP_LEFT = 'TOP_LEFT';
+	EasyStar.TOP = 1;
+	EasyStar.TOP_RIGHT = 2;
+	EasyStar.RIGHT = 4;
+	EasyStar.BOTTOM_RIGHT = 8;
+	EasyStar.BOTTOM = 16;
+	EasyStar.BOTTOM_LEFT = 32;
+	EasyStar.LEFT = 64;
+	EasyStar.TOP_LEFT = 128;
 
 /***/ }),
 /* 1 */
@@ -653,20 +647,22 @@ var EasyStar =
 	* @param {Number} costSoFar How far this node is in moves*cost from the start.
 	* @param {Number} simpleDistanceToTarget Manhatten distance to the end point.
 	**/
-	module.exports = function (parent, x, y, costSoFar, simpleDistanceToTarget) {
+	function Node(parent, x, y, costSoFar, simpleDistanceToTarget) {
 	    this.parent = parent;
 	    this.x = x;
 	    this.y = y;
 	    this.costSoFar = costSoFar;
 	    this.simpleDistanceToTarget = simpleDistanceToTarget;
-
-	    /**
-	    * @return {Number} Best guess distance of a cost using this node.
-	    **/
-	    this.bestGuessDistance = function () {
-	        return this.costSoFar + this.simpleDistanceToTarget;
-	    };
 	};
+
+	/**
+	* @return {Number} Best guess distance of a cost using this node.
+	**/
+	Node.prototype.bestGuessDistance = function () {
+	    return this.costSoFar + this.simpleDistanceToTarget;
+	};
+
+	module.exports = Node;
 
 /***/ }),
 /* 3 */
