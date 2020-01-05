@@ -505,11 +505,11 @@ EasyStar.js = function() {
     var isTileWalkable = function(x, y, sourceNode) {
         var directionalCondition = directionalConditions[y] && directionalConditions[y][x];
         if (directionalCondition !== undefined) {
-            var direction = calculateDirection(sourceNode.x - x, sourceNode.y - y)
+            var direction = calculateDirection(sourceNode.x - x, sourceNode.y - y);
             return (direction&directionalCondition) > 0;
         }
 
-        return acceptableTiles.indexOf(collisionGrid[y][x]) !== -1
+        return acceptableTiles.indexOf(getTileAt(x, y)) !== -1;
     };
 
     /**
@@ -588,11 +588,11 @@ EasyStar.js = function() {
     };
 }
 
-EasyStar.TOP = 1
-EasyStar.TOP_RIGHT = 2
-EasyStar.RIGHT = 4
-EasyStar.BOTTOM_RIGHT = 8
-EasyStar.BOTTOM = 16
-EasyStar.BOTTOM_LEFT = 32
-EasyStar.LEFT = 64
-EasyStar.TOP_LEFT = 128
+EasyStar.TOP = 1;
+EasyStar.TOP_RIGHT = 2;
+EasyStar.RIGHT = 4;
+EasyStar.BOTTOM_RIGHT = 8;
+EasyStar.BOTTOM = 16;
+EasyStar.BOTTOM_LEFT = 32;
+EasyStar.LEFT = 64;
+EasyStar.TOP_LEFT = 128;
