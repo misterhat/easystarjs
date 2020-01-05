@@ -148,7 +148,7 @@ easystar.js is licensed under the MIT license. You may use it for commercial use
 In order to run the demo you will need node.js, and npm installed.
 
 ```sh
-git clone https://github.com/prettymuchbryce/easystarjs.git
+git clone https://github.com/misterhat/easystarjs.git
 
 cd easystarjs/demo
 
